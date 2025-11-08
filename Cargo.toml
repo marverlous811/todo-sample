@@ -16,3 +16,6 @@ axum = { version = "0.8", features = ["tokio", "http1", "macros", "json", "query
 sea-orm = { version = "1.1", features = ["runtime-tokio-native-tls", "macros", "with-chrono", "with-uuid", "debug-print", "with-json", "sqlx-mysql"]}
 sea-orm-migration = "1.1"
 async-trait = "0.1"
+
+[target.'cfg(target_env = "musl")'.dependencies]
+openssl = { version = "0.10", features = ["vendored"] }
