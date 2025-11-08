@@ -1,4 +1,4 @@
-use sea_orm::{Database, DatabaseConnection, DbErr};
+use sea_orm::{ActiveValue, Database, DatabaseConnection, DbErr};
 use sea_orm_migration::MigratorTrait;
 use serde::Serialize;
 
@@ -13,6 +13,12 @@ pub struct Todo {
     pub id: u32,
     pub name: String,
     pub done: bool,
+}
+
+#[derive(Debug, Clone, Serialize)]
+pub struct TodoUpdate {
+    pub name: Option<String>,
+    pub done: Option<bool>,
 }
 
 pub struct SqlAdapter {
@@ -31,5 +37,15 @@ impl SqlAdapter {
 
     pub async fn migrate(&self, step: Option<u32>) -> Result<(), DbErr> {
         Migrator::up(&self.db, step).await
+    }
+}
+
+fn option_to_active_value<T>(value: Option<T>) -> ActiveValue<T>
+where
+    T: Into<sea_orm::Value>,
+{
+    match value {
+        Some(value) => ActiveValue::Set(value),
+        None => ActiveValue::NotSet,
     }
 }

@@ -31,6 +31,21 @@ pub struct CreateTodo {
     name: String,
 }
 
+#[derive(Debug, Clone, Deserialize)]
+pub struct UpdateTodo {
+    name: Option<String>,
+    done: Option<bool>,
+}
+
+impl From<UpdateTodo> for mysql::TodoUpdate {
+    fn from(value: UpdateTodo) -> Self {
+        Self {
+            name: value.name,
+            done: value.done,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize)]
 pub struct ErrorMessage {
     message: String,
@@ -44,6 +59,28 @@ pub struct App {
 async fn create_todo(State(state): State<App>, Json(payload): Json<CreateTodo>) -> Response {
     match state.todo.create(&payload.name).await {
         Ok(todo) => (StatusCode::CREATED, Json(todo)).into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(ErrorMessage { message: e.to_string() }),
+        )
+            .into_response(),
+    }
+}
+
+async fn update_todo(State(state): State<App>, Path(id): Path<u32>, Json(payload): Json<UpdateTodo>) -> Response {
+    match state.todo.update(id, payload.into()).await {
+        Ok(todo) => (StatusCode::OK, Json(todo)).into_response(),
+        Err(e) => (
+            StatusCode::INTERNAL_SERVER_ERROR,
+            Json(ErrorMessage { message: e.to_string() }),
+        )
+            .into_response(),
+    }
+}
+
+async fn delete_todo(State(state): State<App>, Path(id): Path<u32>) -> Response {
+    match state.todo.delete(id).await {
+        Ok(_) => (StatusCode::NO_CONTENT).into_response(),
         Err(e) => (
             StatusCode::INTERNAL_SERVER_ERROR,
             Json(ErrorMessage { message: e.to_string() }),
@@ -90,7 +127,7 @@ async fn main() -> anyhow::Result<()> {
 
     let app = Router::new()
         .route("/todos", post(create_todo))
-        .route("/todos/{id}", get(get_todo))
+        .route("/todos/{id}", get(get_todo).put(update_todo).delete(delete_todo))
         .with_state(app);
 
     let addr = args.http_addr;
