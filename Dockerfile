@@ -9,8 +9,8 @@ RUN echo $APPLICATION
 RUN ls -R /tmp/
 
 RUN case $TARGETPLATFORM in \
-        "linux/amd64")  BUILD=x86_64-unknown-linux-gnu  ;; \
-        "linux/arm64")  BUILD=aarch64-unknown-linux-gnu  ;; \
+        "linux/amd64")  BUILD=x86_64-unknown-linux-musl ;; \
+        "linux/arm64")  BUILD=aarch64-unknown-linux-musl ;; \
         *) exit 1 ;; \
     esac; \
     mv /tmp/release/$APPLICATION-$BUILD/realtime-server /application; \

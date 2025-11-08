@@ -81,14 +81,14 @@ jobs:
       - name: Download binary
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.MODULE }}-x86_64-unknown-linux-gnu
-          path: release/${{ env.MODULE }}-x86_64-unknown-linux-gnu
+          name: ${{ env.MODULE }}-x86_64-unknown-linux-musl
+          path: release/${{ env.MODULE }}-x86_64-unknown-linux-musl
 
       - name: Download binary
         uses: actions/download-artifact@v4
         with:
-          name: ${{ env.MODULE }}-aarch64-unknown-linux-gnu
-          path: release/${{ env.MODULE }}-aarch64-unknown-linux-gnu
+          name: ${{ env.MODULE }}-aarch64-unknown-linux-musl
+          path: release/${{ env.MODULE }}-aarch64-unknown-linux-musl
 
       - name: Login to Dockerhub
         uses: docker/login-action@v1
