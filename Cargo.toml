@@ -1,0 +1,18 @@
+[package]
+name = "data-sample"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+log = "0.4"
+tokio = { version = "1", features = ["full"]}
+futures = "0.3"
+anyhow = "1"
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+clap = { version = "4.4", features = ["derive", "env"] }
+axum = { version = "0.8", features = ["tokio", "http1", "macros", "json", "query"] }
+sea-orm = { version = "1.1", features = ["runtime-tokio-native-tls", "macros", "with-chrono", "with-uuid", "debug-print", "with-json", "sqlx-mysql"]}
+sea-orm-migration = "1.1"
+async-trait = "0.1"
