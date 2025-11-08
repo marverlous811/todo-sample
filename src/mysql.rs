@@ -1,4 +1,6 @@
-use sea_orm::{ActiveValue, Database, DatabaseConnection, DbErr};
+use std::time::Duration;
+
+use sea_orm::{ActiveValue, ConnectOptions, Database, DatabaseConnection, DbErr};
 use sea_orm_migration::MigratorTrait;
 use serde::Serialize;
 
@@ -27,7 +29,14 @@ pub struct SqlAdapter {
 
 impl SqlAdapter {
     pub async fn new(sql_dsn: &str) -> Self {
-        let db = Database::connect(sql_dsn).await.expect("must connected to database");
+        let mut opt = ConnectOptions::new(sql_dsn);
+        opt.max_connections(100)
+            .min_connections(5)
+            .connect_timeout(Duration::from_secs(30))
+            .acquire_timeout(Duration::from_secs(10))
+            .idle_timeout(Duration::from_secs(60))
+            .max_lifetime(Duration::from_secs(60));
+        let db = Database::connect(opt).await.expect("must connected to database");
         Self { db }
     }
 
