@@ -13,7 +13,7 @@ RUN case $TARGETPLATFORM in \
         "linux/arm64")  BUILD=aarch64-unknown-linux-musl ;; \
         *) exit 1 ;; \
     esac; \
-    mv /tmp/release/$APPLICATION-$BUILD/realtime-server /application; \
+    mv /tmp/release/$APPLICATION-$BUILD/data-sample /application; \
     chmod +x /application
 RUN /application --help
 
